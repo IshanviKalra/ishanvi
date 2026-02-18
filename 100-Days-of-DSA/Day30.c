@@ -1,0 +1,93 @@
+/*Problem: Polynomial Using Linked List - Implement using linked list with dynamic memory allocation.
+
+Input:
+- First line: integer n (number of terms)
+- Next n lines: two integers (coefficient and exponent)
+
+Output:
+- Print polynomial in standard form, e.g., 10x^4 + 20x^3 + 30x^2 + 40x + 50
+
+Example:
+Input:
+5
+10 4
+20 3
+30 2
+40 1
+50 0
+
+Output:
+10x^4 + 20x^3 + 30x^2 + 40x + 50
+
+Explanation:
+Each node stores coefficient and exponent. Traverse nodes to print polynomial in decreasing exponent order.*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Polynomial node
+struct Node
+{
+    int coef;
+    int exp;
+    struct Node* next;
+};
+
+// Insert term at end
+struct Node* insert(struct Node* head, int coef, int exp)
+{
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->coef = coef;
+    newNode->exp = exp;
+    newNode->next = NULL;
+
+    if(head == NULL)
+        return newNode;
+
+    struct Node* temp = head;
+    while(temp->next != NULL)
+        temp = temp->next;
+
+    temp->next = newNode;
+    return head;
+}
+
+// Print polynomial
+void display(struct Node* head)
+{
+    struct Node* temp = head;
+
+    while(temp != NULL)
+    {
+        if(temp->exp == 0)
+            printf("%d", temp->coef);
+        else if(temp->exp == 1)
+            printf("%dx", temp->coef);
+        else
+            printf("%dx^%d", temp->coef, temp->exp);
+
+        if(temp->next != NULL)
+            printf(" + ");
+
+        temp = temp->next;
+    }
+}
+
+int main()
+{
+    int n;
+    scanf("%d", &n);
+
+    struct Node* head = NULL;
+
+    for(int i = 0; i < n; i++)
+    {
+        int coef, exp;
+        scanf("%d %d", &coef, &exp);
+        head = insert(head, coef, exp);
+    }
+
+    display(head);
+
+    return 0;
+}

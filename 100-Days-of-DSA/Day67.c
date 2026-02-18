@@ -1,0 +1,78 @@
+/*Problem: Print topological ordering of a Directed Acyclic Graph (DAG) using DFS.*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 1000
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Create node
+struct Node* createNode(int v) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// DFS for topo sort
+void dfs(int v, int visited[], struct Node* adj[], int stack[], int *top) {
+    visited[v] = 1;
+
+    struct Node* temp = adj[v];
+
+    while(temp != NULL) {
+        if(!visited[temp->data]) {
+            dfs(temp->data, visited, adj, stack, top);
+        }
+        temp = temp->next;
+    }
+
+    stack[++(*top)] = v; // push after visiting children
+}
+
+int main() {
+    int n, m;
+    scanf("%d %d", &n, &m);
+
+    struct Node* adj[n];
+
+    // Initialize
+    for(int i = 0; i < n; i++)
+        adj[i] = NULL;
+
+    int u, v;
+
+    // Input directed edges
+    for(int i = 0; i < m; i++) {
+        scanf("%d %d", &u, &v);
+
+        struct Node* newNode = createNode(v);
+        newNode->next = adj[u];
+        adj[u] = newNode;
+    }
+
+    int visited[n];
+    for(int i = 0; i < n; i++)
+        visited[i] = 0;
+
+    int stack[MAX];
+    int top = -1;
+
+    // Call DFS for all vertices
+    for(int i = 0; i < n; i++) {
+        if(!visited[i]) {
+            dfs(i, visited, adj, stack, &top);
+        }
+    }
+
+    // Print topo order (reverse stack)
+    while(top != -1) {
+        printf("%d ", stack[top--]);
+    }
+
+    return 0;
+}
